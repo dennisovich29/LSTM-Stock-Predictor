@@ -29,6 +29,10 @@ This project predicts future stock prices of any stock using deep learning techn
 - units: 512
 - Dropout = 0.01
 
+## Reference 
+Vikas Deswal, “Hyperparameter Tuning of the LSTM model for Stock Price Prediction”, Int J Intell Syst Appl Eng, vol. 12, no. 4, pp. 705–712, Jun. 2024.
+https://www.ijisae.org/index.php/IJISAE/article/view/6274
+
 ## 📷 Results Preview
 
 MSE: 1.6307893434525935
