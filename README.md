@@ -21,6 +21,14 @@ This project predicts future stock prices of any stock using deep learning techn
 - TensorFlow / Keras
 - yfinance
 
+## Hyperparameters 
+- epoch = 200
+- learning_rate = 0.002
+- batch_size = 32
+- optimizer = Adam
+- units: 512
+- Dropout = 0.01
+
 ## 📷 Results Preview
 
 MSE: 1.6307893434525935
