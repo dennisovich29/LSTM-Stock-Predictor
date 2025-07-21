@@ -2,8 +2,8 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from model import load_prediction_assets, make_prediction
+from typing import Optional
 
-# Define the response model to include the 'recommendation' field
 class PredictionResponse(BaseModel):
     ticker: str
     last_close_price: float
@@ -11,30 +11,22 @@ class PredictionResponse(BaseModel):
     predicted_next_day_price: float
     recommendation: str
 
-# Initialize the FastAPI app
 app = FastAPI(
     title="Stock Predictor API",
     description="An API to predict the next day's stock price using an LSTM model.",
-    version="1.2.0"
+    version="1.3.0"
 )
 
-# --- Add CORS Middleware ---
-# This section is crucial for allowing your frontend to connect to this backend.
-origins = [
-    "*", # Allows all origins for development.
-]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"], # Allows all methods (GET, POST, etc.)
-    allow_headers=["*"], # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-# --- End CORS Section ---
 
-
-# Load model and scaler on startup
 model, scaler = load_prediction_assets()
 
 @app.on_event("startup")
@@ -43,11 +35,19 @@ async def startup_event():
     if not model or not scaler:
         print("WARNING: Model or scaler not found. The /predict endpoint will not work.")
 
+# --- UPDATED ENDPOINT SIGNATURE ---
 @app.get("/predict", response_model=PredictionResponse)
-async def predict_endpoint(ticker: str = Query(..., description="The stock ticker symbol to predict (e.g., AAPL, GOOG).")):
+async def predict_endpoint(
+    ticker: str = Query(..., description="The stock ticker symbol to predict (e.g., AAPL, GOOG)."),
+    owns_stock: Optional[bool] = Query(False, description="Set to true if the user already owns the stock.")
+):
     """
-    Predicts the next day's closing price for a given stock ticker and provides a buy/sell/hold recommendation.
+    Predicts the next day's closing price and provides a tailored recommendation.
     """
+    # --- DEBUGGING PRINT STATEMENT ---
+    print(f"Received owns_stock parameter with value: {owns_stock} (Type: {type(owns_stock)})")
+    # --- END DEBUGGING ---
+    
     if not model or not scaler:
         raise HTTPException(
             status_code=503, 
@@ -55,7 +55,8 @@ async def predict_endpoint(ticker: str = Query(..., description="The stock ticke
         )
 
     try:
-        prediction_result = make_prediction(ticker, model, scaler)
+        # Pass the 'owns_stock' parameter to the prediction function
+        prediction_result = make_prediction(ticker, model, scaler, owns_stock)
         return prediction_result
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))

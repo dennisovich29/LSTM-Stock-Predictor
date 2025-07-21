@@ -66,9 +66,10 @@ def load_prediction_assets():
         print(f"Error loading model or scaler: {e}. Please run the training script first.")
         return None, None
 
-def make_prediction(ticker: str, model, scaler):
-    """Makes a prediction for a given ticker."""
-    start_date = date.today() - timedelta(days=200) # Extra buffer for feature calculation
+# --- UPDATED FUNCTION SIGNATURE ---
+def make_prediction(ticker: str, model, scaler, owns_stock: bool = False):
+    """Makes a prediction for a given ticker with context-aware recommendation."""
+    start_date = date.today() - timedelta(days=200)
     end_date = date.today()
     df_raw = get_yfinance_data(ticker, start_date.isoformat(), end_date.isoformat())
     df_features = create_features(df_raw.copy())
@@ -77,7 +78,7 @@ def make_prediction(ticker: str, model, scaler):
         raise ValueError("Not enough data to make a prediction after feature engineering.")
     
     last_n_days = df_features.tail(settings.LOOK_BACK_PERIOD)
-    last_n_days[settings.TARGET] = 0 # Dummy column for scaler
+    last_n_days[settings.TARGET] = 0
     scaled_features = scaler.transform(last_n_days[settings.FEATURES + [settings.TARGET]])
     
     input_data = scaled_features[:, :-1]
@@ -89,12 +90,19 @@ def make_prediction(ticker: str, model, scaler):
     dummy_array[0, -1] = predicted_scaled_pct_change[0, 0]
     predicted_pct_change = scaler.inverse_transform(dummy_array)[0, -1]
 
-    recommendation = "Hold"
+    # --- UPDATED RECOMMENDATION LOGIC ---
+    base_recommendation = "Hold"
     if predicted_pct_change > settings.RECOMMENDATION_THRESHOLD:
-        recommendation = "Buy"
+        base_recommendation = "Buy"
     elif predicted_pct_change < -settings.RECOMMENDATION_THRESHOLD:
-        recommendation = "Sell"
-    
+        base_recommendation = "Sell"
+
+    # Adjust recommendation if the user already owns the stock
+    final_recommendation = base_recommendation
+    if owns_stock and base_recommendation == "Buy":
+        final_recommendation = "Hold"
+    # --- END UPDATED LOGIC ---
+
     last_actual_price = df_raw['Close'].iloc[-1]
     predicted_price = last_actual_price * (1 + predicted_pct_change)
     
@@ -103,10 +111,8 @@ def make_prediction(ticker: str, model, scaler):
         'last_close_price': round(last_actual_price, 2),
         'predicted_pct_change': f'{predicted_pct_change:.4%}',
         'predicted_next_day_price': round(predicted_price, 2),
-        'recommendation': recommendation
+        'recommendation': final_recommendation
     }
 
-# This allows running training directly
 if __name__ == '__main__':
     train_model()
-

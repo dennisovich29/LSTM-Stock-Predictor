@@ -1,5 +1,6 @@
 export interface StockPredictionRequest {
   ticker: string;
+  owns_stock?: boolean;
 }
 
 export interface StockPredictionResponse {

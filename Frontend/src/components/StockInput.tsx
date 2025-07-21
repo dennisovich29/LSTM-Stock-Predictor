@@ -9,12 +9,14 @@ interface StockInputProps {
 
 const StockInput: React.FC<StockInputProps> = ({ onPredict, isLoading }) => {
   const [ticker, setTicker] = useState('');
+  const [ownsStock, setOwnsStock] = useState(false);
 
   const handlePredict = () => {
     if (!ticker.trim()) return;
     
     const request: StockPredictionRequest = {
       ticker: ticker.trim().toUpperCase(),
+      owns_stock: ownsStock,
     };
     
     onPredict(request);
@@ -33,7 +35,7 @@ const StockInput: React.FC<StockInputProps> = ({ onPredict, isLoading }) => {
         
         <div className="grid md:grid-cols-2 gap-6 mb-6">
           {/* Ticker Input */}
-          <div className="md:col-span-2">
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Stock Ticker Symbol
             </label>
@@ -42,7 +44,6 @@ const StockInput: React.FC<StockInputProps> = ({ onPredict, isLoading }) => {
               value={ticker}
               onChange={(e) => setTicker(e.target.value.toUpperCase())}
               placeholder="e.g., AAPL, TSLA, GOOGL"
-              placeholder="e.g., AAPL, TSLA, GOOG"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-lg font-semibold"
               maxLength={10}
             />
@@ -55,6 +56,28 @@ const StockInput: React.FC<StockInputProps> = ({ onPredict, isLoading }) => {
                   Ready to predict {ticker.toUpperCase()}
                 </div>
               )}
+            </div>
+          </div>
+          
+          {/* Owns Stock Checkbox */}
+          <div className="flex items-center justify-center">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 w-full">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={ownsStock}
+                  onChange={(e) => setOwnsStock(e.target.checked)}
+                  className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 mr-3"
+                />
+                <div>
+                  <span className="text-sm font-medium text-blue-900">
+                    I currently own this stock
+                  </span>
+                  <p className="text-xs text-blue-700 mt-1">
+                    This affects the AI recommendation logic
+                  </p>
+                </div>
+              </label>
             </div>
           </div>
         </div>
