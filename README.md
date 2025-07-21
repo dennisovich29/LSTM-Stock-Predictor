@@ -1,53 +1,105 @@
-# Time-series-prediction-LSTM
-Time series prediction of closing stock using LSTM
-# 📈 Apple Stock Price Prediction using LSTM
+LSTM Stock Price Predictor
+This is a full-stack web application that uses a Long Short-Term Memory (LSTM) Recurrent Neural Network to predict the next day's stock price movement and provide a "Buy," "Sell," or "Hold" recommendation. The project features a Python FastAPI backend for the machine learning model and a modern JavaScript/TypeScript frontend for the user interface.
 
-This project predicts future stock prices of any stock using deep learning techniques. The data was collected using the `yfinance` API and modeled with an LSTM (Long Short-Term Memory) network using TensorFlow/Keras.
+Features
+AI-Powered Predictions: Utilizes a deep learning LSTM model to forecast stock price changes.
 
-## 📅 Time Period
-- **Data Range**: `2014-12-03` to `2025-06-10`
+Generalizable Model: The model is trained on percentage changes, not absolute prices, allowing it to be applied to any stock ticker without retraining.
 
-## 📂 Features
-- 📊 Data Collection using `yfinance`
-- 📈 Data Normalization and Preprocessing
-- 🧠 LSTM Model for Time Series Forecasting
-- 🖼️ Visualization of Real vs Predicted Closing Prices
+Technical Indicator Analysis: Enriches the model's input by engineering a suite of technical indicators (SMAs, RSI, Bollinger Bands).
 
-## 🔧 Libraries Used
-- Python
-- NumPy, Pandas
-- Matplotlib
-- sklearn
-- TensorFlow / Keras
-- yfinance
+Actionable Recommendations: Provides a clear "Buy," "Sell," or "Hold" signal based on the predicted price movement.
 
-## Hyperparameters 
-- epoch = 200
-- learning_rate = 0.002
-- batch_size = 32
-- optimizer = Adam
-- units: 512
-- Dropout = 0.01
+RESTful API: A clean, fast, and interactive API built with FastAPI serves the model's predictions.
 
-## Reference 
-Vikas Deswal, “Hyperparameter Tuning of the LSTM model for Stock Price Prediction”, Int J Intell Syst Appl Eng, vol. 12, no. 4, pp. 705–712, Jun. 2024.
-https://www.ijisae.org/index.php/IJISAE/article/view/6274
+Interactive Frontend: A simple and responsive user interface to input a stock ticker and view the prediction.
 
-## 📷 Results Preview
+Tech Stack
+Backend
+Python 3
 
-MSE: 1.6307893434525935
-RMSE: 1.2770236268184678
-MAE: 0.8414269010802905
-R² Score: 0.9982297360833974
+FastAPI: For building the high-performance API.
 
-![apple_test_stock](https://github.com/user-attachments/assets/bd5c6886-5217-4a07-b977-2ccf283d0d92)
+TensorFlow / Keras: For building and training the LSTM model.
 
-![micron_stock](https://github.com/user-attachments/assets/29d023bf-5dba-4c50-84a0-16b1a01411e0)
+scikit-learn: For data preprocessing (MinMaxScaler).
 
-## ▶️ How to Run
-1. Clone the repo or open in Colab.
-2. Install dependencies .
-3. Run the notebook and follow through the cells.
+Pandas & NumPy: For data manipulation and numerical operations.
 
-## 📄 License
-This project is for educational purposes only and does not constitute financial advice.
+yfinance: For fetching historical stock data.
+
+Uvicorn: As the ASGI server to run the API.
+
+Frontend
+JavaScript / TypeScript
+
+React / Vite: (Or your specific frontend framework)
+
+Tailwind CSS: For styling the user interface.
+
+Project Structure
+This project is organized as a monorepo with two distinct subdirectories:
+
+/
+├── backend/      # Contains the FastAPI application, model, and all Python code.
+└── frontend/     # Contains the user-facing application code.
+
+Local Setup and Installation
+To run this project locally, you will need to have Python, Node.js, and npm installed. You will need to run the backend and frontend in two separate terminals.
+
+1. Backend Setup
+# Navigate to the backend directory
+cd backend
+
+# Create and activate a Python virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install the required Python packages
+pip install -r requirements.txt
+
+# Train the model (only needs to be done once)
+# This will create the model and scaler files in the artifacts/ folder
+python model.py
+
+# Start the backend API server
+uvicorn app:app --reload
+
+The backend server will now be running on http://127.0.0.1:8000.
+
+2. Frontend Setup
+# Open a new terminal and navigate to the frontend directory
+cd frontend
+
+# Install the required npm packages (only needs to be done once)
+npm install
+
+# Start the frontend development server
+npm run dev
+
+The frontend will now be running on its own local server (e.g., http://localhost:5174) and will be able to communicate with the backend.
+
+API Endpoint
+The backend exposes the following endpoint:
+
+GET /predict
+Description: Predicts the next day's closing price for a given stock ticker.
+
+Query Parameter:
+
+ticker (string, required): The stock symbol (e.g., AAPL, GOOG).
+
+Success Response (200 OK):
+
+{
+  "ticker": "GOOG",
+  "last_close_price": 185.94,
+  "predicted_pct_change": "0.0502%",
+  "predicted_next_day_price": 186.03,
+  "recommendation": "Hold"
+}
+
+Error Response (400/500):
+
+{
+  "detail": "Error message here."
