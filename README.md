@@ -1,96 +1,107 @@
-LSTM Stock Price Predictor
-This is a full-stack web application that uses a Long Short-Term Memory (LSTM) Recurrent Neural Network to predict the next day's stock price movement and provide a "Buy," "Sell," or "Hold" recommendation. The project features a Python FastAPI backend for the machine learning model and a modern JavaScript/TypeScript frontend for the user interface.
+# 📈 LSTM Stock Price Predictor
 
-Features
-AI-Powered Predictions: Utilizes a deep learning LSTM model to forecast stock price changes.
+A full-stack AI-powered web application that predicts the next day's stock price movement using a Long Short-Term Memory (LSTM) model and provides actionable trading recommendations: **Buy**, **Sell**, or **Hold**.
 
-Generalizable Model: The model is trained on percentage changes, not absolute prices, allowing it to be applied to any stock ticker without retraining.
+---
 
-Technical Indicator Analysis: Enriches the model's input by engineering a suite of technical indicators (SMAs, RSI, Bollinger Bands).
+## 🚀 Features
 
-Actionable Recommendations: Provides a clear "Buy," "Sell," or "Hold" signal based on the predicted price movement.
+- **AI-Powered Predictions:** Uses an LSTM neural network to forecast next-day stock price movement.
+- **Generalizable Model:** Trained on percentage changes, making it adaptable to any stock ticker without retraining.
+- **Technical Indicator Analysis:** Enhances model accuracy with features like:
+  - Simple Moving Averages (SMA)
+  - Relative Strength Index (RSI)
+  - Bollinger Bands
+- **Actionable Recommendations:** Interprets the predicted movement into easy-to-follow advice.
+- **RESTful API:** Built using **FastAPI**, ensuring high-performance delivery.
+- **Interactive Frontend:** Clean and responsive UI to fetch and view predictions.
 
-RESTful API: A clean, fast, and interactive API built with FastAPI serves the model's predictions.
+---
 
-Interactive Frontend: A simple and responsive user interface to input a stock ticker and view the prediction.
+## 🛠 Tech Stack
 
-Tech Stack
-Backend
-Python 3
+### Backend
+- **Python 3**
+- **FastAPI** – High-performance API framework
+- **TensorFlow / Keras** – For training the LSTM model
+- **scikit-learn** – Preprocessing with `MinMaxScaler`
+- **Pandas & NumPy** – Data manipulation
+- **yfinance** – Historical stock data fetching
+- **Uvicorn** – ASGI server for FastAPI
 
-FastAPI: For building the high-performance API.
+### Frontend
+- **JavaScript / TypeScript**
+- **React** (with **Vite**)
+- **Tailwind CSS** – For modern, responsive UI
 
-TensorFlow / Keras: For building and training the LSTM model.
+---
 
-scikit-learn: For data preprocessing (MinMaxScaler).
+## 📁 Project Structure
 
-Pandas & NumPy: For data manipulation and numerical operations.
-
-yfinance: For fetching historical stock data.
-
-Uvicorn: As the ASGI server to run the API.
-
-Frontend
-JavaScript / TypeScript
-
-React / Vite: (Or your specific frontend framework)
-
-Tailwind CSS: For styling the user interface.
-
-Project Structure
-This project is organized as a monorepo with two distinct subdirectories:
-
+```
 /
-├── backend/      # Contains the FastAPI application, model, and all Python code.
-└── frontend/     # Contains the user-facing application code.
+├── backend/      # FastAPI app, model training code, API routes
+└── frontend/     # React frontend app
+```
 
-Local Setup and Installation
-To run this project locally, you will need to have Python, Node.js, and npm installed. You will need to run the backend and frontend in two separate terminals.
+---
 
-1. Backend Setup
-# Navigate to the backend directory
+## ⚙️ Installation & Local Development
+
+### 1️⃣ Backend Setup
+
+```bash
+# Navigate to backend directory
 cd backend
 
-# Create and activate a Python virtual environment
+# Create and activate virtual environment
 python3 -m venv venv
 source venv/bin/activate
 
-# Install the required Python packages
+# Install dependencies
 pip install -r requirements.txt
 
-# Train the model (only needs to be done once)
-# This will create the model and scaler files in the artifacts/ folder
+# Train the model (once)
 python model.py
 
-# Start the backend API server
+# Start the API server
 uvicorn app:app --reload
+```
 
-The backend server will now be running on http://127.0.0.1:8000.
+> 🔗 Backend runs at: `http://127.0.0.1:8000`
 
-2. Frontend Setup
-# Open a new terminal and navigate to the frontend directory
+---
+
+### 2️⃣ Frontend Setup
+
+```bash
+# Open new terminal
 cd frontend
 
-# Install the required npm packages (only needs to be done once)
+# Install npm packages
 npm install
 
-# Start the frontend development server
+# Start development server
 npm run dev
+```
 
-The frontend will now be running on its own local server (e.g., http://localhost:5174) and will be able to communicate with the backend.
+> 🔗 Frontend runs at: `http://localhost:5174`
 
-API Endpoint
-The backend exposes the following endpoint:
+---
 
-GET /predict
-Description: Predicts the next day's closing price for a given stock ticker.
+## 🔌 API Endpoint
 
-Query Parameter:
+### `GET /predict`
 
-ticker (string, required): The stock symbol (e.g., AAPL, GOOG).
+**Description:** Predicts the next day's closing price for a given stock ticker.
 
-Success Response (200 OK):
+#### Query Parameters
+| Parameter | Type   | Required | Description                     |
+|-----------|--------|----------|---------------------------------|
+| `ticker`  | string | ✅ yes   | Stock symbol (e.g., AAPL, TSLA) |
 
+#### ✅ Success Response (`200 OK`)
+```json
 {
   "ticker": "GOOG",
   "last_close_price": 185.94,
@@ -98,8 +109,26 @@ Success Response (200 OK):
   "predicted_next_day_price": 186.03,
   "recommendation": "Hold"
 }
+```
 
-Error Response (400/500):
-
+#### ❌ Error Response (`400/500`)
+```json
 {
   "detail": "Error message here."
+}
+```
+
+---
+
+## 📌 Notes
+
+- The LSTM model and scaler are saved in the `artifacts/` folder after training.
+- You can replace `yfinance` with any custom data source if needed.
+- Ideal for learning LSTM-based financial forecasting and full-stack AI deployment.
+
+---
+
+## 📜 License
+
+MIT License – [Your Name or GitHub Username]  
+Feel free to use, modify, and share with attribution.
